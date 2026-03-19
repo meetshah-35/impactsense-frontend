@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>ImpactSense — Dataset Samples</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    .page-wrap { background: var(--void); padding-bottom: 4rem; }
+
+    .samples-hero { padding: 4rem 0 2.5rem; position: relative; overflow: hidden; }
+    .samples-hero .neon-grid { opacity: .5; }
+
+    /* Stats strip */
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .ss-card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 1.2rem;
+      position: relative; overflow: hidden;
+    }
+    .ss-card::before {
+      content:''; position:absolute; top:0;left:0;right:0;height:2px;
+      background: linear-gradient(90deg,transparent,var(--neon),transparent);
+    }
+    .ss-val { font-family: var(--fd); font-size: 1.8rem; font-weight: 800; color: var(--neon); line-height: 1; }
+    .ss-lbl { font-family: var(--fm); font-size: .62rem; color: var(--muted); letter-spacing: .1em; margin-top: .2rem; }
+
+    /* Filters bar */
+    .filters-bar {
+      display: flex; gap: .7rem; flex-wrap: wrap; align-items: flex-end;
+      padding: 1.2rem; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .fb-group { display: flex; flex-direction: column; gap: .25rem; }
+    .fb-group select, .fb-group input { min-width: 120px; font-size: .78rem; }
+    .fb-group.wide input { min-width: 180px; }
+    .filter-apply {
+      font-family: var(--fd); font-weight: 700; font-size: .78rem; letter-spacing: .1em;
+      padding: .6rem 1.2rem; border: 1px solid var(--neon); border-radius: 6px;
+      background: rgba(0,255,200,.1); color: var(--neon); cursor: pointer; transition: all .2s;
+      white-space: nowrap; align-self: flex-end;
+    }
+    .filter-apply:hover { background: rgba(0,255,200,.2); box-shadow: var(--glow-neon); }
+
+    /* Table */
+    .table-wrap {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .table-head {
+      display: grid;
+      grid-template-columns: 2.5rem 1.8fr .65fr .65fr .55fr .55fr .7fr .75fr;
+      gap: .4rem; padding: .65rem 1rem;
+      background: rgba(0,255,200,.04); border-bottom: 1px solid var(--border);
+      font-family: var(--fm); font-size: .62rem; color: var(--muted); letter-spacing: .1em;
+    }
+    .table-head span { cursor: pointer; transition: color .2s; user-select: none; }
+    .table-head span:hover { color: var(--neon); }
+    .table-head span.sorted { color: var(--neon); }
+
+    .table-body { display: flex; flex-direction: column; }
+    .t-row {
+      display: grid;
+      grid-template-columns: 2.5rem 1.8fr .65fr .65fr .55fr .55fr .7fr .75fr;
+      gap: .4rem; align-items: center;
+      padding: .6rem 1rem; border-bottom: 1px solid rgba(255,255,255,.03);
+      cursor: pointer; transition: background .12s;
+      position: relative;
+    }
+    .t-row::before {
+      content:''; position:absolute; left:0;top:0;bottom:0; width:2px;
+      background:transparent; transition:background .15s;
+    }
+    .t-row:hover { background: rgba(0,255,200,.03); }
+    .t-row:hover::before { background: var(--neon); }
+    .t-row:last-child { border-bottom: none; }
+
+    .t-id { font-family: var(--fm); font-size: .68rem; color: var(--muted2); }
+    .t-loc { font-size: .84rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .t-mag { font-family: var(--fd); font-size: .92rem; font-weight: 700; }
+    .t-cell { font-family: var(--fm); font-size: .76rem; color: var(--muted); }
+
+    /* Pagination */
+    .pagination {
+      display: flex; gap: .3rem; justify-content: center; align-items: center;
+      padding: 1.2rem; flex-wrap: wrap;
+    }
+    .pg {
+      font-family: var(--fm); font-size: .68rem; letter-spacing: .06em;
+      padding: .3rem .65rem; border-radius: 4px;
+      border: 1px solid var(--border2); background: rgba(255,255,255,.03);
+      color: var(--muted); cursor: pointer; transition: all .15s;
+    }
+    .pg.active { border-color: var(--neon); color: var(--neon); background: rgba(0,255,200,.08); }
+    .pg:hover { border-color: var(--neon); color: var(--neon); }
+
+    /* Alert distribution viz */
+    .dist-row { display: flex; gap: .5rem; align-items: flex-end; height: 60px; margin-top: .5rem; }
+    .dist-bar { flex: 1; border-radius: 4px 4px 0 0; transition: height .5s ease; min-height: 4px; }
+    .dist-labels { display: flex; gap: .5rem; }
+    .dist-lbl { flex: 1; font-family: var(--fm); font-size: .6rem; text-align: center; margin-top: .3rem; }
+
+    /* Feature info cards */
+    .feature-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .8rem; margin-top: 2rem; }
+    .feat-card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem; position: relative; overflow: hidden;
+      transition: transform .2s, border-color .2s;
+    }
+    .feat-card:hover { transform: translateY(-2px); border-color: rgba(0,255,200,.25); }
+    .feat-card::after { content:''; position:absolute;top:0;left:0;right:0;height:1.5px; background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:.6; }
+    .feat-name { font-family: var(--fd); font-size: 1rem; font-weight: 700; letter-spacing: .08em; margin-bottom: .2rem; }
+    .feat-sub { font-family: var(--fm); font-size: .6rem; color: var(--neon); letter-spacing: .1em; margin-bottom: .5rem; }
+    .feat-desc { font-size: .78rem; color: var(--muted); line-height: 1.65; }
+    .feat-bar-wrap { height: 3px; background: rgba(255,255,255,.06); border-radius: 999px; margin-top: .7rem; }
+    .feat-bar-fill { height: 100%; border-radius: 999px; background: var(--neon); animation: barIn .8s ease both; }
+    @keyframes barIn { from { width:0% !important; } }
+
+    @media(max-width:900px){
+      .stats-strip { grid-template-columns: repeat(2,1fr); }
+      .table-head,.t-row { grid-template-columns: 1.5fr .6fr .75fr; }
+      .table-head span:nth-child(n+4),.t-row *:nth-child(n+4) { display:none; }
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width:600px){
+      .feature-grid { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">⚡</div>
+        IMPACT<span style="color:var(--neon)">SENSE</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">🏠 HOME</a>
+        <a href="samples.html" class="nav-link active">📊 SAMPLES</a>
+        <a href="predict.html" class="nav-link">⚡ PREDICT</a>
+      </nav>
+      <div class="nav-right">
+        <div class="nav-status"><span class="ns-dot"></span><span class="mono" style="font-size:.68rem;color:var(--green);letter-spacing:.08em">414 LOADED</span></div>
+        <a href="login.html" class="btn btn-neon" style="padding:.4rem .9rem;font-size:.75rem">→ LOGIN</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <section class="samples-hero">
+      <div class="neon-grid"></div>
+      <div class="container">
+        <span class="sec-tag">ML DATASET</span>
+        <h1 class="sec-title">Training Dataset <span style="color:var(--neon)">Explorer</span></h1>
+        <p class="sec-sub">414 real seismic events · 5 features · 4 alert classes · GradientBoosting trained</p>
+      </div>
+    </section>
+
+    <div class="container">
+      <!-- Stats -->
+      <div class="stats-strip">
+        <div class="ss-card"><div class="ss-val">414</div><div class="ss-lbl">TOTAL EVENTS</div></div>
+        <div class="ss-card" style="--neon:var(--neon2)"><div class="ss-val" style="color:var(--neon2)" id="filteredCount">414</div><div class="ss-lbl">FILTERED EVENTS</div></div>
+        <div class="ss-card" style="--neon:#a855f7"><div class="ss-val" style="color:#a855f7">98.6%</div><div class="ss-lbl">MODEL ACCURACY</div></div>
+        <div class="ss-card" style="--neon:var(--orange)"><div class="ss-val" style="color:var(--orange)">5</div><div class="ss-lbl">FEATURES USED</div></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="fb-group wide">
+          <label>SEARCH LOCATION</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--neon);font-size:.8rem">🔍</span>
+            <input id="searchInp" type="text" placeholder="Tokyo, Chile, India…" style="padding-left:2rem" oninput="applyFilters()"/>
+          </div>
+        </div>
+        <div class="fb-group">
+          <label>ALERT LEVEL</label>
+          <select id="alertFil" onchange="applyFilters()">
+            <option value="all">ALL</option>
+            <option value="green">🟢 GREEN</option>
+            <option value="yellow">🟡 YELLOW</option>
+            <option value="orange">🟠 ORANGE</option>
+            <option value="red">🔴 RED</option>
+          </select>
+        </div>
+        <div class="fb-group">
+          <label>SORT BY</label>
+          <select id="sortFil" onchange="applyFilters()">
+            <option value="id">ID</option>
+            <option value="mag_desc">MAGNITUDE ↓</option>
+            <option value="mag_asc">MAGNITUDE ↑</option>
+            <option value="sig_desc">SIGNIFICANCE ↓</option>
+            <option value="depth_asc">DEPTH ↑</option>
+          </select>
+        </div>
+        <div class="fb-group">
+          <label>MIN MAGNITUDE</label>
+          <input type="number" id="minMagFil" value="0" min="0" max="10" step="0.5" oninput="applyFilters()" style="width:90px"/>
+        </div>
+        <button class="filter-apply" onclick="resetFilters()">RESET</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <div class="table-head">
+          <span>#</span>
+          <span onclick="sortBy('location')">LOCATION</span>
+          <span onclick="sortBy('magnitude')" class="sorted">MAG</span>
+          <span onclick="sortBy('depth')">DEPTH</span>
+          <span onclick="sortBy('cdi')">CDI</span>
+          <span onclick="sortBy('mmi')">MMI</span>
+          <span onclick="sortBy('sig')">SIG</span>
+          <span onclick="sortBy('alert')">ALERT</span>
+        </div>
+        <div class="table-body" id="tableBody"></div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+      <!-- Feature cards -->
+      <div style="margin-top:3rem">
+        <span class="sec-tag">FEATURE REFERENCE</span>
+        <h2 class="sec-title" style="margin-top:.4rem;margin-bottom:1.5rem">Dataset Features</h2>
+        <div class="feature-grid">
+          <div class="feat-card"><div class="feat-name">MAGNITUDE</div><div class="feat-sub">SEISMIC ENERGY RELEASE</div><div class="feat-desc">Logarithmic measure of energy at the earthquake source. Primary predictor — each unit = ~10× amplitude, ~31× energy.</div><div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:92%"></div></div></div>
+          <div class="feat-card"><div class="feat-name">DEPTH</div><div class="feat-sub">HYPOCENTER DEPTH (km)</div><div class="feat-desc">Distance from Earth's surface to rupture point. Shallow events (&lt;70km) cause far more surface damage.</div><div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:55%"></div></div></div>
+          <div class="feat-card"><div class="feat-name">CDI</div><div class="feat-sub">COMMUNITY DECIMAL INTENSITY</div><div class="feat-desc">Human-reported shaking intensity. Captures real perceived impact — the human dimension of seismic damage.</div><div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:72%"></div></div></div>
+          <div class="feat-card"><div class="feat-name">MMI</div><div class="feat-sub">MODIFIED MERCALLI INTENSITY</div><div class="feat-desc">Instrument-calibrated intensity for local geology. Strongest discriminator between alert classes in this dataset.</div><div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:85%"></div></div></div>
+          <div class="feat-card"><div class="feat-name">SIG</div><div class="feat-sub">COMPOSITE SIGNIFICANCE</div><div class="feat-desc">USGS composite metric combining magnitude, intensity and reported effects into one impact score.</div><div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:78%"></div></div></div>
+          <div class="feat-card" style="border-color:rgba(255,59,92,.3)"><div class="feat-name" style="color:var(--red)">ALERT</div><div class="feat-sub" style="color:var(--red)">ML TARGET · 4 CLASSES</div><div class="feat-desc">Green(14) · Yellow(81) · Orange(260) · Red(59). Based on USGS PAGER fatality/economic loss thresholds.</div><div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:100%;background:linear-gradient(90deg,var(--green) 0%,var(--yellow) 33%,var(--orange) 66%,var(--red) 100%)"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">IMPACTSENSE</span>
+      <span class="footer-copy mono">414 USGS Seismic Events · Z-score normalized · GradientBoostingClassifier</span>
+    </div>
+  </footer>
+
+  <script src="events_data.js"></script>
+  <script>
+    const AC = {green:'#00e87a',yellow:'#f5c518',orange:'#ff7c2a',red:'#ff3b5c'};
+    const riskColor = m => m<4?'#00e87a':m<6?'#ff7c2a':m<7?'#ff3b5c':'#ff3b5c';
+    let allRows = typeof CSV_EVENTS!=='undefined' ? CSV_EVENTS : [];
+    let filtered = [...allRows];
+    let currentPage = 1;
+    const PAGE = 20;
+
+    function applyFilters() {
+      const search = document.getElementById('searchInp').value.toLowerCase();
+      const alert  = document.getElementById('alertFil').value;
+      const sort   = document.getElementById('sortFil').value;
+      const minMag = parseFloat(document.getElementById('minMagFil').value)||0;
+      filtered = allRows.filter(e =>
+        e.magnitude >= minMag &&
+        (alert==='all'||e.alert===alert) &&
+        (!search||e.location.toLowerCase().includes(search))
+      );
+      if(sort==='mag_desc') filtered.sort((a,b)=>b.magnitude-a.magnitude);
+      else if(sort==='mag_asc') filtered.sort((a,b)=>a.magnitude-b.magnitude);
+      else if(sort==='sig_desc') filtered.sort((a,b)=>b.sig-a.sig);
+      else if(sort==='depth_asc') filtered.sort((a,b)=>a.depth-b.depth);
+      document.getElementById('filteredCount').textContent = filtered.length;
+      currentPage = 1;
+      renderTable();
+    }
+
+    function sortBy(field) {
+      const s = document.getElementById('sortFil');
+      s.value = field==='magnitude'?'mag_desc':field==='sig'?'sig_desc':field==='depth'?'depth_asc':'id';
+      applyFilters();
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInp').value = '';
+      document.getElementById('alertFil').value = 'all';
+      document.getElementById('sortFil').value = 'id';
+      document.getElementById('minMagFil').value = '0';
+      applyFilters();
+    }
+
+    function renderTable() {
+      const body = document.getElementById('tableBody');
+      const start = (currentPage-1)*PAGE;
+      const rows = filtered.slice(start,start+PAGE);
+      if(!rows.length){ body.innerHTML='<div style="padding:2rem;text-align:center;font-family:var(--fm);font-size:.8rem;color:var(--muted2)">No events match filters</div>'; return; }
+      body.innerHTML = rows.map(e=>`
+        <div class="t-row" onclick="openDetail(${e.id})">
+          <span class="t-id">#${e.id}</span>
+          <span class="t-loc">${e.location}</span>
+          <span class="t-mag" style="color:${riskColor(e.magnitude)}">M ${e.magnitude.toFixed(1)}</span>
+          <span class="t-cell">${e.depth.toFixed(0)} km</span>
+          <span class="t-cell">${e.cdi.toFixed(1)}</span>
+          <span class="t-cell">${e.mmi.toFixed(1)}</span>
+          <span class="t-cell">${Math.round(e.sig)}</span>
+          <span><span class="badge badge-${e.alert}">${e.alert.toUpperCase()}</span></span>
+        </div>`).join('');
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const total = Math.ceil(filtered.length/PAGE);
+      const pg = document.getElementById('pagination');
+      if(total<=1){pg.innerHTML='';return;}
+      let html = '';
+      if(currentPage>1) html+=`<button class="pg" onclick="goPage(${currentPage-1})">←</button>`;
+      for(let p=Math.max(1,currentPage-2);p<=Math.min(total,currentPage+2);p++)
+        html+=`<button class="pg ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+      if(currentPage<total) html+=`<button class="pg" onclick="goPage(${currentPage+1})">→</button>`;
+      pg.innerHTML = html;
+    }
+
+    function goPage(p){currentPage=p;renderTable();window.scrollTo({top:document.querySelector('.table-wrap').offsetTop-80,behavior:'smooth'});}
+
+    function openDetail(id) {
+      const e = allRows.find(x=>x.id===id); if(!e) return;
+      alert(`Event #${e.id}\nLocation: ${e.location}\nMagnitude: M${e.magnitude.toFixed(1)}\nDepth: ${e.depth.toFixed(0)}km\nAlert: ${e.alert.toUpperCase()}\nSIG: ${Math.round(e.sig)}\n\n→ Go to Predict page to run ML model`);
+    }
+
+    // Init
+    applyFilters();
+  </script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>ImpactSense — Seismic Intelligence Platform</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-wrap">
+      <div class="nav-brand">
+        <svg class="brand-svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <circle cx="15" cy="15" r="13" stroke="url(#bs1)" stroke-width="1.2"/>
+          <circle cx="15" cy="15" r="7.5" stroke="url(#bs1)" stroke-width="0.7" stroke-dasharray="2.5 2"/>
+          <circle cx="15" cy="15" r="3" fill="url(#bs1)"/>
+          <path d="M3 15 Q8 9 15 13 Q22 17 27 11" stroke="url(#bs2)" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="bs1" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+            <linearGradient id="bs2" x1="0" y1="0" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00d4ff" stop-opacity=".8"/><stop offset="100%" stop-color="#a855f7" stop-opacity=".8"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div>
+          <div class="brand-name">IMPACT<span class="bc">SENSE</span></div>
+          <div class="brand-sub mono">SEISMIC INTELLIGENCE · 414 EVENTS LOADED</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#hero" class="nl active">Overview</a>
+        <a href="#globe" class="nl">Globe</a>
+        <a href="#analysis" class="nl">Analysis</a>
+        <a href="#events" class="nl">Events</a>
+        <a href="#dataset" class="nl">Dataset</a>
+      </nav>
+      <div class="nav-end">
+        <span class="sys-indicator">
+          <span class="sys-dot" id="sysDot"></span>
+          <span class="sys-lbl mono" id="sysLbl">NOMINAL</span>
+        </span>
+        <span class="utc mono" id="utcClock">00:00:00 UTC</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="waveCanvas" aria-hidden="true"></canvas>
+    <div class="hero-grid-bg" aria-hidden="true"></div>
+    <div class="hero-wrap">
+      <div class="hero-left">
+        <div class="hero-pill mono"><span class="hp-dot"></span>414 EVENTS · REAL DATASET ACTIVE</div>
+        <h1 class="hero-h1">
+          <span class="h1a">Earthquake</span>
+          <span class="h1b">Impact<em> Intelligence</em></span>
+          <span class="h1c">Platform</span>
+        </h1>
+        <p class="hero-p">Real dataset · 414 seismic events · ML alert classification · Global distribution map · Live filtering</p>
+        <div class="hero-btns">
+          <button class="hbtn primary" id="btnSimulate"><span>⚡</span> SIMULATE EVENT</button>
+          <button class="hbtn ghost" id="btnToggleAuto" aria-pressed="false">
+            <span class="auto-dot" id="autoDot"></span> AUTO: <b id="autoLbl">OFF</b>
+          </button>
+          <button class="hbtn outline" id="btnExport">↓ EXPORT</button>
+        </div>
+        <div class="hero-kpis">
+          <div class="kpi"><span class="kv" id="hTotal">414</span><span class="kl mono">TOTAL EVENTS</span></div>
+          <span class="kdiv"></span>
+          <div class="kpi"><span class="kv" id="hMaxMag">—</span><span class="kl mono">MAX MAGNITUDE</span></div>
+          <span class="kdiv"></span>
+          <div class="kpi"><span class="kv" id="hRisk">—</span><span class="kl mono">GLOBAL RISK</span></div>
+          <span class="kdiv"></span>
+          <div class="kpi"><span class="kv mono" id="hTime">—</span><span class="kl mono">LAST UPDATE</span></div>
+        </div>
+      </div>
+      <div class="hero-right">
+        <!-- Ring gauge -->
+        <div class="gauge-card">
+          <div class="gc-top">
+            <span class="gc-ttl mono">GLOBAL RISK INDEX</span>
+            <span class="live-badge"><span class="lb-dot"></span>LIVE</span>
+          </div>
+          <div class="gauge-body">
+            <svg class="gauge-svg" viewBox="0 0 220 180" aria-hidden="true">
+              <defs>
+                <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#22c55e"/>
+                  <stop offset="33%" stop-color="#facc15"/>
+                  <stop offset="66%" stop-color="#fb923c"/>
+                  <stop offset="100%" stop-color="#ef4444"/>
+                </linearGradient>
+                <filter id="gf"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              </defs>
+              <!-- decorative outer -->
+              <circle cx="110" cy="110" r="100" stroke="rgba(0,212,255,0.05)" stroke-width="1" fill="none" stroke-dasharray="5 4"/>
+              <!-- track -->
+              <path class="g-trk" d="M 22 110 A 88 88 0 0 1 198 110" stroke-width="10" fill="none" stroke-linecap="round"/>
+              <!-- fill -->
+              <path class="g-fill" id="gaugeFill" d="M 22 110 A 88 88 0 0 1 198 110" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="276" filter="url(#gf)"/>
+              <!-- needle -->
+              <line id="gaugeNeedle" class="g-needle" x1="110" y1="110" x2="110" y2="30" stroke-linecap="round" stroke-width="2.5"/>
+              <circle cx="110" cy="110" r="5.5" fill="#00d4ff" opacity=".9"/>
+            </svg>
+            <div class="gauge-center">
+              <span class="g-num" id="riskIndex">0</span>
+              <span class="g-of mono">/100</span>
+              <span class="g-lbl mono" id="riskLabel">—</span>
+            </div>
+          </div>
+          <div class="g-key">
+            <span><i style="background:#22c55e"></i>Low</span>
+            <span><i style="background:#facc15"></i>Mod</span>
+            <span><i style="background:#fb923c"></i>High</span>
+            <span><i style="background:#ef4444"></i>Severe</span>
+          </div>
+        </div>
+        <!-- Alert chips -->
+        <div class="alert-chips" id="alertChips"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOBE SECTION -->
+  <section class="section" id="globe">
+    <div class="sec-wrap">
+      <div class="sec-head">
+        <div class="sh-top"><span class="stag mono">GLOBAL VIEW</span><span class="sdash">—</span><span class="ssub mono">414 EVENTS MAPPED</span></div>
+        <h2 class="sh-title">Live Seismic Event Map</h2>
+        <p class="sh-desc">All 414 events from the ML dataset plotted on a real world map. Dot size = magnitude. Color = alert level.</p>
+      </div>
+
+      <!-- Map controls -->
+      <div class="map-controls">
+        <div class="mc-left">
+          <button class="mc-btn active" data-filter="all">ALL <span id="mcAll">414</span></button>
+          <button class="mc-btn green" data-filter="green">GREEN <span id="mcGreen">0</span></button>
+          <button class="mc-btn yellow" data-filter="yellow">YELLOW <span id="mcYellow">0</span></button>
+          <button class="mc-btn orange" data-filter="orange">ORANGE <span id="mcOrange">0</span></button>
+          <button class="mc-btn red" data-filter="red">RED <span id="mcRed">0</span></button>
+        </div>
+        <div class="mc-right">
+          <span class="mc-info mono" id="mapInfo">HOVER EVENT FOR DETAILS</span>
+        </div>
+      </div>
+
+      <!-- World map canvas -->
+      <div class="map-frame" id="mapFrame">
+        <div class="mf-corner tl"></div><div class="mf-corner tr"></div>
+        <div class="mf-corner bl"></div><div class="mf-corner br"></div>
+        <canvas id="worldMap" aria-label="World seismic event map"></canvas>
+        <!-- Tooltip -->
+        <div class="map-tooltip" id="mapTooltip">
+          <div class="tt-loc" id="ttLoc">—</div>
+          <div class="tt-grid">
+            <span class="tt-lbl">MAG</span><span class="tt-val" id="ttMag">—</span>
+            <span class="tt-lbl">DEPTH</span><span class="tt-val" id="ttDepth">—</span>
+            <span class="tt-lbl">ALERT</span><span class="tt-val" id="ttAlert">—</span>
+            <span class="tt-lbl">SIG</span><span class="tt-val" id="ttSig">—</span>
+          </div>
+        </div>
+        <div class="map-legend">
+          <div class="ml-row"><span class="ml-title mono">ALERT LEVEL</span></div>
+          <div class="ml-row"><span class="mld" style="background:#22c55e"></span><span>Green (Low)</span></div>
+          <div class="ml-row"><span class="mld" style="background:#facc15"></span><span>Yellow</span></div>
+          <div class="ml-row"><span class="mld" style="background:#fb923c"></span><span>Orange</span></div>
+          <div class="ml-row"><span class="mld" style="background:#ef4444"></span><span>Red (High)</span></div>
+          <div class="ml-row mt"><span class="ml-title mono">SIZE = MAGNITUDE</span></div>
+        </div>
+        <div class="map-coords mono" id="mapCoords">LAT — / LNG —</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYSIS -->
+  <section class="section section-dark" id="analysis">
+    <div class="sec-wrap">
+      <div class="sec-head">
+        <div class="sh-top"><span class="stag mono">ANALYSIS</span><span class="sdash">—</span><span class="ssub mono">FILTER & STATISTICS</span></div>
+        <h2 class="sh-title">Event Analysis</h2>
+      </div>
+      <div class="analysis-layout">
+        <!-- Filters panel -->
+        <div class="glass-panel">
+          <div class="ph"><span class="phi">⚙</span><span class="pht mono">FILTER CONTROLS</span></div>
+          <div class="filter-grid">
+            <div class="ff full">
+              <label class="fl mono">LOCATION SEARCH</label>
+              <div class="fi-w"><span class="fi-pre mono">›</span><input id="search" class="fi" type="text" placeholder="Japan, Chile, India…"/></div>
+            </div>
+            <div class="ff">
+              <label class="fl mono">ALERT LEVEL</label>
+              <select id="alert" class="fi">
+                <option value="all">ALL</option>
+                <option value="green">🟢 GREEN</option>
+                <option value="yellow">🟡 YELLOW</option>
+                <option value="orange">🟠 ORANGE</option>
+                <option value="red">🔴 RED</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label class="fl mono">REGION</label>
+              <select id="region" class="fi">
+                <option value="all">ALL REGIONS</option>
+                <option value="asia">ASIA / PACIFIC</option>
+                <option value="europe">EUROPE</option>
+                <option value="america">AMERICAS</option>
+                <option value="africa">AFRICA</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label class="fl mono">MIN MAGNITUDE</label>
+              <input type="number" id="minMag" class="fi" min="0" max="10" step="0.1" value="0"/>
+            </div>
+            <div class="ff">
+              <label class="fl mono">MIN SIG</label>
+              <input type="number" id="minSig" class="fi" min="0" step="1" value="0"/>
+            </div>
+            <div class="ff full">
+              <label class="fl mono">SORT ORDER</label>
+              <select id="sortBy" class="fi">
+                <option value="timeDesc">NEWEST FIRST</option>
+                <option value="magDesc">MAGNITUDE ↓</option>
+                <option value="magAsc">MAGNITUDE ↑</option>
+                <option value="depthAsc">DEPTH SHALLOW→DEEP</option>
+                <option value="sigDesc">SIGNIFICANCE ↓</option>
+              </select>
+            </div>
+          </div>
+          <button class="apply-btn" id="applyFilters">APPLY FILTERS</button>
+          <div class="panel-div"></div>
+          <div class="ph"><span class="phi">⬡</span><span class="pht mono">ML PREDICTION ENGINE</span></div>
+          <div class="api-status" id="apiStatus">
+            <span class="as-dot" id="asDot"></span>
+            <span class="as-lbl mono" id="asLbl">CHECKING API…</span>
+          </div>
+          <!-- Sliders use z-score range (-3 to +3) matching training data -->
+          <div class="pred-sliders">
+            <div class="ps-row">
+              <div class="ps-labels"><span class="ps-name mono">MAGNITUDE</span><span class="ps-hint" id="hMag">M5.5</span></div>
+              <input type="range" id="testMag" class="ps-range" min="-3" max="3" step="0.1" value="0.5"/>
+              <span class="ps-val mono" id="vMag">0.5</span>
+            </div>
+            <div class="ps-row">
+              <div class="ps-labels"><span class="ps-name mono">DEPTH</span><span class="ps-hint" id="hDepth">~42km</span></div>
+              <input type="range" id="testDepth" class="ps-range" min="-1.5" max="3" step="0.1" value="-0.5"/>
+              <span class="ps-val mono" id="vDepth">-0.5</span>
+            </div>
+            <div class="ps-row">
+              <div class="ps-labels"><span class="ps-name mono">CDI</span><span class="ps-hint" id="hCdi">~5.4</span></div>
+              <input type="range" id="testCdi" class="ps-range" min="-2" max="2" step="0.1" value="0.5"/>
+              <span class="ps-val mono" id="vCdi">0.5</span>
+            </div>
+            <div class="ps-row">
+              <div class="ps-labels"><span class="ps-name mono">MMI</span><span class="ps-hint" id="hMmi">~V</span></div>
+              <input type="range" id="testMmi" class="ps-range" min="-3" max="2" step="0.1" value="0.8"/>
+              <span class="ps-val mono" id="vMmi">0.8</span>
+            </div>
+            <div class="ps-row">
+              <div class="ps-labels"><span class="ps-name mono">SIG</span><span class="ps-hint" id="hSig">~880</span></div>
+              <input type="range" id="testSig" class="ps-range" min="-3" max="3" step="0.1" value="0.5"/>
+              <span class="ps-val mono" id="vSig">0.5</span>
+            </div>
+          </div>
+          <div class="pred-presets">
+            <span class="mono" style="font-size:.6rem;color:var(--muted)">PRESETS:</span>
+            <button class="preset-btn" data-preset="minor">MINOR</button>
+            <button class="preset-btn" data-preset="moderate">MODERATE</button>
+            <button class="preset-btn" data-preset="strong">STRONG</button>
+            <button class="preset-btn" data-preset="major">MAJOR</button>
+          </div>
+          <button class="apply-btn alt" id="testRiskBtn">⚡ RUN ML PREDICTION</button>
+          <div class="test-out" id="testOut"></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-col">
+          <div class="stats-grid">
+            <div class="scard c1"><span class="sl mono">EVENTS</span><span class="sv" id="statEvents">0</span><span class="su mono">filtered</span></div>
+            <div class="scard c2"><span class="sl mono">MAX MAG</span><span class="sv" id="statMaxMag">0.0</span><span class="su mono">richter</span></div>
+            <div class="scard c3"><span class="sl mono">AVG DEPTH</span><span class="sv" id="statDepth">0</span><span class="su mono">km</span></div>
+            <div class="scard c4"><span class="sl mono">TOP ALERT</span><span class="sv" id="statAlert">—</span><span class="su mono">level</span></div>
+            <div class="scard c5"><span class="sl mono">AVG CDI</span><span class="sv" id="statCdi">0.0</span><span class="su mono">intensity</span></div>
+            <div class="scard c6"><span class="sl mono">AVG MMI</span><span class="sv" id="statMmi">0.0</span><span class="su mono">mercalli</span></div>
+          </div>
+
+          <div class="glass-panel">
+            <div class="ph"><span class="phi">▬</span><span class="pht mono">RISK SEVERITY INDEX</span><span class="pht-r mono" id="riskPct">0%</span></div>
+            <div class="rbar-wrap">
+              <div class="rbar-track"><div class="rbar-fill" id="riskBar"></div></div>
+              <div class="rbar-scale mono"><span>LOW</span><span>MOD</span><span>HIGH</span><span>SEVERE</span></div>
+            </div>
+          </div>
+
+          <!-- Mag histogram -->
+          <div class="glass-panel">
+            <div class="ph"><span class="phi">▦</span><span class="pht mono">MAGNITUDE DISTRIBUTION</span></div>
+            <div class="histo" id="histo"></div>
+          </div>
+
+          <!-- Alert pie/bar -->
+          <div class="glass-panel">
+            <div class="ph"><span class="phi">◈</span><span class="pht mono">ALERT DISTRIBUTION</span></div>
+            <div class="alert-dist" id="alertDist"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS TABLE -->
+  <section class="section" id="events">
+    <div class="sec-wrap">
+      <div class="sec-head spread">
+        <div>
+          <div class="sh-top"><span class="stag mono">LIVE FEED</span><span class="sdash">—</span><span class="ssub mono" id="lastUpdated">—</span></div>
+          <h2 class="sh-title">Seismic Event Feed</h2>
+        </div>
+        <button class="hbtn outline" id="btnExport2">↓ JSON</button>
+      </div>
+      <div class="etable-head mono">
+        <span>#</span><span>LOCATION</span><span>MAG</span><span>DEPTH</span><span>CDI</span><span>MMI</span><span>SIG</span><span>ALERT</span>
+      </div>
+      <div class="etable-body" id="eventsList"></div>
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </section>
+
+  <!-- DATASET FEATURES -->
+  <section class="section section-dark" id="dataset">
+    <div class="sec-wrap">
+      <div class="sec-head">
+        <div class="sh-top"><span class="stag mono">ML DATASET</span><span class="sdash">—</span><span class="ssub mono">414 RECORDS · 6 FEATURES</span></div>
+        <h2 class="sh-title">Model Feature Reference</h2>
+      </div>
+      <div class="ds-grid">
+        <div class="dc" style="--ac:#00d4ff"><div class="dc-n mono">01</div><div class="dc-ico">◈</div><h3 class="dc-ttl">CDI</h3><p class="dc-sub">Community Decimal Intensity</p><p class="dc-body">Human-reported shaking intensity. Captures real perceived impact across affected communities.</p><div class="dc-bar"><div class="dc-fill" style="width:72%"></div></div><span class="dc-wt mono">WEIGHT: HIGH</span></div>
+        <div class="dc" style="--ac:#a855f7"><div class="dc-n mono">02</div><div class="dc-ico">◉</div><h3 class="dc-ttl">MMI</h3><p class="dc-sub">Modified Mercalli Intensity</p><p class="dc-body">Instrument-calibrated intensity adjusted for local geology. Varies with soil and distance.</p><div class="dc-bar"><div class="dc-fill" style="width:65%"></div></div><span class="dc-wt mono">WEIGHT: HIGH</span></div>
+        <div class="dc" style="--ac:#f97316"><div class="dc-n mono">03</div><div class="dc-ico">◎</div><h3 class="dc-ttl">MAGNITUDE</h3><p class="dc-sub">Seismic Energy Release</p><p class="dc-body">Logarithmic energy measure. Each unit = ~10× amplitude, ~31× energy. Primary predictor.</p><div class="dc-bar"><div class="dc-fill" style="width:92%"></div></div><span class="dc-wt mono">WEIGHT: CRITICAL</span></div>
+        <div class="dc" style="--ac:#22c55e"><div class="dc-n mono">04</div><div class="dc-ico">▾</div><h3 class="dc-ttl">DEPTH</h3><p class="dc-sub">Hypocenter Depth (km)</p><p class="dc-body">Shallow events (&lt;70km) cause far more surface damage than deep-focus earthquakes.</p><div class="dc-bar"><div class="dc-fill" style="width:55%"></div></div><span class="dc-wt mono">WEIGHT: MEDIUM</span></div>
+        <div class="dc" style="--ac:#facc15"><div class="dc-n mono">05</div><div class="dc-ico">◆</div><h3 class="dc-ttl">SIGNIFICANCE</h3><p class="dc-sub">Composite Impact Score</p><p class="dc-body">USGS composite metric. High SIG strongly correlates with elevated alert designations.</p><div class="dc-bar"><div class="dc-fill" style="width:80%"></div></div><span class="dc-wt mono">WEIGHT: HIGH</span></div>
+        <div class="dc target-dc" style="--ac:#ef4444"><div class="dc-n mono">TARGET</div><div class="dc-ico">⊕</div><h3 class="dc-ttl">ALERT</h3><p class="dc-sub">ML Prediction Target · 4 Classes</p><p class="dc-body">Green (14) · Yellow (81) · Orange (260) · Red (59). PAGER-based fatality thresholds.</p><div class="dc-bar"><div class="dc-fill" style="width:100%;background:linear-gradient(90deg,#22c55e 0%,#facc15 33%,#fb923c 66%,#ef4444 100%)"></div></div><span class="dc-wt mono" style="color:#ef4444">OUTPUT LAYER</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="modal-bg" id="modalBg"></div>
+    <div class="modal-box">
+      <div class="mb-corners"><span class="mbc tl"></span><span class="mbc tr"></span><span class="mbc bl"></span><span class="mbc br"></span></div>
+      <div class="mb-top">
+        <div><span class="mb-eye mono">EVENT RECORD</span><div class="mb-ttl" id="modalTitle">—</div><div class="mb-sub mono" id="modalSub">—</div></div>
+        <button class="mb-close" id="modalClose">✕</button>
+      </div>
+      <div class="mb-body">
+        <div class="mg">
+          <div class="mc2"><span class="ml2 mono">MAGNITUDE</span><span class="mv2" id="dMag">—</span></div>
+          <div class="mc2"><span class="ml2 mono">DEPTH</span><span class="mv2" id="dDepth">—</span></div>
+          <div class="mc2"><span class="ml2 mono">REGION</span><span class="mv2" id="dRegion">—</span></div>
+          <div class="mc2"><span class="ml2 mono">RISK LEVEL</span><span class="mv2" id="dRisk">—</span></div>
+          <div class="mc2"><span class="ml2 mono">CDI</span><span class="mv2" id="dCdi">—</span></div>
+          <div class="mc2"><span class="ml2 mono">MMI</span><span class="mv2" id="dMmi">—</span></div>
+          <div class="mc2 span2"><span class="ml2 mono">SIGNIFICANCE (SIG)</span><span class="mv2" id="dSig">—</span></div>
+        </div>
+        <div class="mb-note mono">⚠ Prototype — connect your trained model API for confidence scores & waveforms.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="ft-wrap">
+      <div><span class="ft-brand">IMPACTSENSE</span><span class="ft-sub mono"> · Seismic Intelligence Platform · 414 Events · ML Research</span></div>
+      <span class="ft-copy mono">© <span id="year"></span></span>
+    </div>
+  </footer>
+
+  <!-- ═══ CONFIGURE YOUR RENDER API URL HERE ═══
+       After deploying backend to Render, replace the URL below:
+       window.IMPACTSENSE_API_URL = "https://impactsense-api.onrender.com";
+  ════════════════════════════════════════════════ -->
+  <script>
+    window.IMPACTSENSE_API_URL = ""; // ← paste your Render URL here
+  </script>
+  <style>
+    .api-status{display:flex;align-items:center;gap:.45rem;margin-bottom:.7rem;
+      padding:.35rem .7rem;border-radius:5px;background:rgba(255,255,255,.03);border:1px solid var(--border2)}
+    .as-dot{width:7px;height:7px;border-radius:50%;background:var(--muted2)}
+    .as-lbl{font-size:.65rem;color:var(--muted);letter-spacing:.1em}
+    .as-dot.online{background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,.8)}
+    .as-dot.offline{background:#ef4444}
+    .test-out{font-family:var(--fm)}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .pred-loading{animation:spin 1s linear infinite;display:inline-block}
+  </style>
+  <script src="events_data.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
