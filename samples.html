@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>ImpactSense — Dataset Samples</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    .page-wrap { background: var(--void); padding-bottom: 5rem; }
+
+    /* ── HERO ── */
+    .samples-hero { padding: 4.5rem 0 2.5rem; position: relative; overflow: hidden; }
+    .samples-hero .neon-grid { opacity: .5; }
+    .sh-inner { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-end; gap: 2rem; flex-wrap: wrap; }
+
+    /* ── STAT STRIP ── */
+    .stat-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .ss {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.1rem 1.2rem; position: relative; overflow: hidden;
+    }
+    .ss::before { content:''; position:absolute;top:0;left:0;right:0;height:2px; background:linear-gradient(90deg,transparent,var(--neon),transparent); }
+    .ss-val { font-family:var(--fd); font-size:1.9rem; font-weight:800; line-height:1; }
+    .ss-lbl { font-family:var(--fm); font-size:.62rem; color:var(--muted); letter-spacing:.1em; margin-top:.2rem; }
+
+    /* ── ALERT VISUAL SUMMARY ── */
+    .alert-summary {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: .8rem; margin-bottom: 2rem;
+    }
+    .as-card {
+      border-radius: 10px; border: 1px solid; padding: 1.2rem;
+      display: flex; flex-direction: column; gap: .4rem;
+      position: relative; overflow: hidden; transition: transform .2s;
+    }
+    .as-card:hover { transform: translateY(-3px); }
+    .as-card::after { content:''; position:absolute;top:0;left:0;bottom:0;width:3px; }
+    .as-card.green  { border-color:rgba(0,232,122,.3);background:rgba(0,232,122,.05); }
+    .as-card.green::after  { background:var(--green); }
+    .as-card.yellow { border-color:rgba(245,197,24,.3);background:rgba(245,197,24,.05); }
+    .as-card.yellow::after { background:var(--yellow); }
+    .as-card.orange { border-color:rgba(255,124,42,.3);background:rgba(255,124,42,.05); }
+    .as-card.orange::after { background:var(--orange); }
+    .as-card.red    { border-color:rgba(255,59,92,.3);background:rgba(255,59,92,.05); }
+    .as-card.red::after    { background:var(--red); }
+    .as-num { font-family:var(--fd); font-size:2rem; font-weight:800; line-height:1; }
+    .as-name { font-family:var(--fd); font-size:.9rem; font-weight:700; letter-spacing:.08em; }
+    .as-pct { font-family:var(--fm); font-size:.7rem; color:var(--muted); }
+    .as-bar-wrap { height:4px; background:rgba(255,255,255,.06); border-radius:999px; margin-top:.4rem; }
+    .as-bar { height:100%; border-radius:999px; }
+
+    /* ── FEATURE CHARTS ── */
+    .feature-section { margin-bottom: 3rem; }
+    .feature-charts { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 1.2rem; }
+    .fc {
+      background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:1.2rem;
+      position:relative; overflow:hidden;
+    }
+    .fc::before { content:''; position:absolute;top:0;left:0;right:0;height:1.5px; background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:.6; }
+    .fc-name { font-family:var(--fd); font-size:1rem; font-weight:700; letter-spacing:.08em; margin-bottom:.2rem; }
+    .fc-sub { font-family:var(--fm); font-size:.62rem; color:var(--neon); letter-spacing:.1em; margin-bottom:.6rem; opacity:.8; }
+    .fc-desc { font-size:.8rem; color:var(--muted); line-height:1.65; margin-bottom:.9rem; }
+    .fc-bar-wrap { height:3px; background:rgba(255,255,255,.06); border-radius:999px; margin-bottom:.5rem; }
+    .fc-fill { height:100%; border-radius:999px; animation:barIn .8s ease both; }
+    @keyframes barIn { from{width:0%!important} }
+    .fc-weight { font-family:var(--fm); font-size:.6rem; letter-spacing:.1em; opacity:.7; }
+
+    /* ── FILTERS ── */
+    .filters-bar {
+      display:flex; gap:.7rem; flex-wrap:wrap; align-items:flex-end;
+      padding:1.2rem; background:var(--panel);
+      border:1px solid var(--border); border-radius:10px; margin-bottom:1.5rem;
+    }
+    .fb { display:flex; flex-direction:column; gap:.25rem; }
+    .fb select, .fb input { min-width:120px; }
+    .fb.wide input { min-width:200px; }
+    .fapply {
+      font-family:var(--fd); font-weight:700; font-size:.78rem; letter-spacing:.1em;
+      padding:.6rem 1.2rem; border:1px solid var(--neon); border-radius:6px;
+      background:rgba(0,255,200,.1); color:var(--neon); cursor:pointer; transition:all .2s;
+      white-space:nowrap; align-self:flex-end;
+    }
+    .fapply:hover { background:rgba(0,255,200,.2); box-shadow:var(--glow-neon); }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background:var(--panel); border:1px solid var(--border);
+      border-radius:12px; overflow:hidden;
+    }
+    .tbl-info {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:.7rem 1rem; border-bottom:1px solid var(--border);
+      font-family:var(--fm); font-size:.68rem; color:var(--muted); letter-spacing:.08em;
+    }
+    .tbl-head {
+      display:grid;
+      grid-template-columns:3rem 2fr .7fr .7fr .6fr .6fr .8fr .85fr;
+      gap:.4rem; padding:.65rem 1rem;
+      background:rgba(0,255,200,.04);
+      font-family:var(--fm); font-size:.62rem; color:var(--muted); letter-spacing:.1em;
+    }
+    .tbl-head span { cursor:pointer; transition:color .2s; user-select:none; }
+    .tbl-head span:hover { color:var(--neon); }
+    .tbl-body { display:flex; flex-direction:column; }
+    .trow {
+      display:grid;
+      grid-template-columns:3rem 2fr .7fr .7fr .6fr .6fr .8fr .85fr;
+      gap:.4rem; align-items:center;
+      padding:.62rem 1rem; border-bottom:1px solid rgba(255,255,255,.03);
+      cursor:pointer; transition:background .12s; position:relative;
+    }
+    .trow::before { content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:transparent;transition:background .14s; }
+    .trow:hover { background:rgba(0,255,200,.03); }
+    .trow:hover::before { background:var(--neon); }
+    .trow:last-child { border-bottom:none; }
+    .tid { font-family:var(--fm); font-size:.68rem; color:var(--muted2); }
+    .tloc { font-size:.84rem; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tmag { font-family:var(--fd); font-size:.92rem; font-weight:700; }
+    .tcell { font-family:var(--fm); font-size:.76rem; color:var(--muted); }
+
+    /* Pagination */
+    .pagination { display:flex; gap:.3rem; justify-content:center; padding:1.2rem; flex-wrap:wrap; }
+    .pg { font-family:var(--fm); font-size:.68rem; padding:.3rem .65rem; border-radius:4px; border:1px solid var(--border2); background:rgba(255,255,255,.03); color:var(--muted); cursor:pointer; transition:all .14s; }
+    .pg.active,.pg:hover { border-color:var(--neon); color:var(--neon); background:rgba(0,255,200,.07); }
+
+    /* Modal */
+    .modal{position:fixed;inset:0;display:none;z-index:500}
+    .modal.open{display:block}
+    .modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px)}
+    .modal-box{position:relative;width:min(600px,calc(100%-2rem));margin:10vh auto;background:rgba(4,9,20,.98);border:1px solid var(--border);border-radius:14px;overflow:hidden;animation:mIn .2s ease both;box-shadow:0 30px 80px rgba(0,0,0,.8)}
+    @keyframes mIn{from{opacity:0;transform:translateY(10px)}}
+    .modal-top{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid var(--border)}
+    .modal-ttl{font-family:var(--fd);font-size:1.05rem;font-weight:700}
+    .modal-close{background:transparent;border:1px solid var(--border2);color:var(--muted);width:28px;height:28px;border-radius:5px;cursor:pointer;font-size:.8rem}
+    .modal-close:hover{border-color:var(--red);color:var(--red)}
+    .modal-body{padding:1.2rem;display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+    .mc{background:rgba(255,255,255,.025);border:1px solid var(--border2);border-radius:6px;padding:.7rem .85rem}
+    .mc.wide{grid-column:span 2}
+    .ml{font-family:var(--fm);font-size:.6rem;color:var(--muted);letter-spacing:.1em;display:block;margin-bottom:.2rem}
+    .mv{font-family:var(--fd);font-size:1.05rem;font-weight:700}
+
+    @media(max-width:900px){
+      .stat-strip{grid-template-columns:repeat(2,1fr)}
+      .alert-summary{grid-template-columns:repeat(2,1fr)}
+      .feature-charts{grid-template-columns:repeat(2,1fr)}
+      .tbl-head,.trow{grid-template-columns:2fr .7fr .85fr}
+      .tbl-head span:nth-child(n+4),.trow *:nth-child(n+4){display:none}
+    }
+    @media(max-width:600px){
+      .feature-charts{grid-template-columns:1fr}
+      .stat-strip{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">
+          <img src="earthquake.png" alt="logo" style="width:22px;height:22px;object-fit:contain;filter:brightness(10) sepia(1) hue-rotate(150deg)"/>
+        </div>
+        IMPACT<span>SENSE</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">🏠 HOME</a>
+        <a href="samples.html" class="nav-link active">📊 SAMPLES</a>
+        <a href="predict.html" class="nav-link">⚡ PREDICT</a>
+      </nav>
+      <div class="nav-right">
+        <div class="nav-status">
+          <span class="ns-dot"></span>
+          <span style="font-family:var(--fm);font-size:.68rem;color:var(--green);letter-spacing:.08em">414 LOADED</span>
+        </div>
+        <a href="login.html" class="btn btn-neon" style="padding:.4rem .9rem;font-size:.75rem">→ LOGIN</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <!-- HERO -->
+    <section class="samples-hero">
+      <div class="neon-grid"></div>
+      <div class="container">
+        <div class="sh-inner">
+          <div>
+            <span class="sec-tag">ML DATASET</span>
+            <h1 class="sec-title" style="margin-top:.4rem">Training Dataset <span style="color:var(--neon)">Explorer</span></h1>
+            <p class="sec-sub">414 real USGS seismic events · 5 input features · 4 alert classes · GradientBoosting trained · 98.6% accuracy</p>
+          </div>
+          <a href="predict.html" class="btn btn-solid" style="flex-shrink:0">⚡ RUN PREDICTION →</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+
+      <!-- STAT STRIP -->
+      <div class="stat-strip">
+        <div class="ss">
+          <div class="ss-val" style="color:var(--neon)">414</div>
+          <div class="ss-lbl">TOTAL EVENTS</div>
+        </div>
+        <div class="ss">
+          <div class="ss-val" style="color:var(--neon2)">98.6%</div>
+          <div class="ss-lbl">MODEL ACCURACY</div>
+        </div>
+        <div class="ss">
+          <div class="ss-val" style="color:#a855f7">5</div>
+          <div class="ss-lbl">INPUT FEATURES</div>
+        </div>
+        <div class="ss">
+          <div class="ss-val" style="color:var(--orange)">4</div>
+          <div class="ss-lbl">ALERT CLASSES</div>
+        </div>
+      </div>
+
+      <!-- ALERT DISTRIBUTION VISUAL -->
+      <div style="margin-bottom:2rem">
+        <span class="sec-tag">ALERT DISTRIBUTION</span>
+        <h2 class="sec-title" style="margin-top:.4rem;margin-bottom:1.2rem">Class Distribution</h2>
+        <div class="alert-summary">
+          <div class="as-card green">
+            <div class="as-num" style="color:var(--green)">14</div>
+            <div class="as-name" style="color:var(--green)">GREEN</div>
+            <div class="as-pct">3.4% of dataset · Low impact</div>
+            <div class="as-bar-wrap"><div class="as-bar" style="width:3.4%;background:var(--green)"></div></div>
+          </div>
+          <div class="as-card yellow">
+            <div class="as-num" style="color:var(--yellow)">81</div>
+            <div class="as-name" style="color:var(--yellow)">YELLOW</div>
+            <div class="as-pct">19.6% of dataset · Moderate</div>
+            <div class="as-bar-wrap"><div class="as-bar" style="width:19.6%;background:var(--yellow)"></div></div>
+          </div>
+          <div class="as-card orange">
+            <div class="as-num" style="color:var(--orange)">260</div>
+            <div class="as-name" style="color:var(--orange)">ORANGE</div>
+            <div class="as-pct">62.8% of dataset · Significant</div>
+            <div class="as-bar-wrap"><div class="as-bar" style="width:62.8%;background:var(--orange)"></div></div>
+          </div>
+          <div class="as-card red">
+            <div class="as-num" style="color:var(--red)">59</div>
+            <div class="as-name" style="color:var(--red)">RED</div>
+            <div class="as-pct">14.3% of dataset · Critical</div>
+            <div class="as-bar-wrap"><div class="as-bar" style="width:14.3%;background:var(--red)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURE CARDS -->
+      <div class="feature-section">
+        <span class="sec-tag">FEATURE REFERENCE</span>
+        <h2 class="sec-title" style="margin-top:.4rem;margin-bottom:0">Model Features</h2>
+        <div class="feature-charts">
+          <div class="fc">
+            <div class="fc-name">MAGNITUDE</div>
+            <div class="fc-sub">SEISMIC ENERGY RELEASE</div>
+            <div class="fc-desc">Logarithmic measure of energy at the earthquake source. Each unit = ~10× amplitude, ~31× energy. <strong>Primary predictor</strong> in the model.</div>
+            <div class="fc-bar-wrap"><div class="fc-fill" style="width:92%;background:linear-gradient(90deg,#ff7c2a,#ff3b5c)"></div></div>
+            <span class="fc-weight" style="color:var(--orange)">WEIGHT: CRITICAL</span>
+          </div>
+          <div class="fc">
+            <div class="fc-name">MMI</div>
+            <div class="fc-sub">MODIFIED MERCALLI INTENSITY</div>
+            <div class="fc-desc">Instrument-calibrated shaking intensity for local geology. <strong>Strongest class discriminator</strong> — varies by soil type and epicentral distance.</div>
+            <div class="fc-bar-wrap"><div class="fc-fill" style="width:85%;background:linear-gradient(90deg,var(--neon),var(--neon2))"></div></div>
+            <span class="fc-weight" style="color:var(--neon)">WEIGHT: VERY HIGH</span>
+          </div>
+          <div class="fc">
+            <div class="fc-name">CDI</div>
+            <div class="fc-sub">COMMUNITY DECIMAL INTENSITY</div>
+            <div class="fc-desc">Human-reported shaking intensity from felt reports. Captures real perceived impact — the human dimension of seismic damage assessment.</div>
+            <div class="fc-bar-wrap"><div class="fc-fill" style="width:72%;background:linear-gradient(90deg,var(--neon2),#a855f7)"></div></div>
+            <span class="fc-weight" style="color:var(--neon2)">WEIGHT: HIGH</span>
+          </div>
+          <div class="fc">
+            <div class="fc-name">SIGNIFICANCE</div>
+            <div class="fc-sub">COMPOSITE IMPACT SCORE (SIG)</div>
+            <div class="fc-desc">USGS composite metric combining magnitude, intensity and reported effects. High SIG strongly correlates with elevated alert designations.</div>
+            <div class="fc-bar-wrap"><div class="fc-fill" style="width:78%;background:linear-gradient(90deg,#f5c518,#ff7c2a)"></div></div>
+            <span class="fc-weight" style="color:var(--yellow)">WEIGHT: HIGH</span>
+          </div>
+          <div class="fc">
+            <div class="fc-name">DEPTH</div>
+            <div class="fc-sub">HYPOCENTER DEPTH (km)</div>
+            <div class="fc-desc">Distance from Earth's surface to the rupture point. Shallow events (&lt;70km) cause significantly more surface damage than deep-focus earthquakes.</div>
+            <div class="fc-bar-wrap"><div class="fc-fill" style="width:55%;background:linear-gradient(90deg,var(--green),var(--neon))"></div></div>
+            <span class="fc-weight" style="color:var(--green)">WEIGHT: MEDIUM</span>
+          </div>
+          <div class="fc" style="border-color:rgba(255,59,92,.3)">
+            <div class="fc-name" style="color:var(--red)">ALERT TARGET</div>
+            <div class="fc-sub" style="color:var(--red)">ML PREDICTION OUTPUT</div>
+            <div class="fc-desc">Model output: <span style="color:var(--green)">Green</span> / <span style="color:var(--yellow)">Yellow</span> / <span style="color:var(--orange)">Orange</span> / <span style="color:var(--red)">Red</span>. Based on USGS PAGER fatality &amp; economic loss thresholds.</div>
+            <div class="fc-bar-wrap"><div class="fc-fill" style="width:100%;background:linear-gradient(90deg,var(--green) 0%,var(--yellow) 33%,var(--orange) 66%,var(--red) 100%)"></div></div>
+            <span class="fc-weight" style="color:var(--red)">OUTPUT LAYER</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div style="margin-bottom:1rem">
+        <span class="sec-tag">DATASET EXPLORER</span>
+        <h2 class="sec-title" style="margin-top:.4rem;margin-bottom:1.2rem">Browse All 414 Events</h2>
+      </div>
+      <div class="filters-bar">
+        <div class="fb wide">
+          <label>SEARCH LOCATION</label>
+          <div style="position:relative">
+            <span style="position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--neon);font-size:.8rem;pointer-events:none">🔍</span>
+            <input id="sSearch" type="text" placeholder="Hawaii, Japan, Chile, Italy…" style="padding-left:2rem" oninput="applyF()"/>
+          </div>
+        </div>
+        <div class="fb">
+          <label>ALERT LEVEL</label>
+          <select id="sAlert" onchange="applyF()">
+            <option value="all">ALL</option>
+            <option value="green">🟢 GREEN (14)</option>
+            <option value="yellow">🟡 YELLOW (81)</option>
+            <option value="orange">🟠 ORANGE (260)</option>
+            <option value="red">🔴 RED (59)</option>
+          </select>
+        </div>
+        <div class="fb">
+          <label>REGION</label>
+          <select id="sRegion" onchange="applyF()">
+            <option value="all">ALL REGIONS</option>
+            <option value="asia">ASIA / PACIFIC</option>
+            <option value="europe">EUROPE</option>
+            <option value="america">AMERICAS</option>
+            <option value="africa">AFRICA</option>
+          </select>
+        </div>
+        <div class="fb">
+          <label>SORT BY</label>
+          <select id="sSort" onchange="applyF()">
+            <option value="id">ID</option>
+            <option value="mag_d">MAGNITUDE ↓</option>
+            <option value="mag_a">MAGNITUDE ↑</option>
+            <option value="sig_d">SIGNIFICANCE ↓</option>
+            <option value="dep_a">DEPTH ↑</option>
+          </select>
+        </div>
+        <button class="fapply" onclick="resetF()">↺ RESET</button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrap">
+        <div class="tbl-info">
+          <span id="tblInfo">Showing all 414 events</span>
+          <span style="color:var(--muted2)">Click row for details · Sorted by ID</span>
+        </div>
+        <div class="tbl-head">
+          <span>#</span>
+          <span onclick="sortCol('location')">LOCATION ↕</span>
+          <span onclick="sortCol('magnitude')">MAG ↕</span>
+          <span onclick="sortCol('depth')">DEPTH ↕</span>
+          <span>CDI</span>
+          <span>MMI</span>
+          <span onclick="sortCol('sig')">SIG ↕</span>
+          <span onclick="sortCol('alert')">ALERT ↕</span>
+        </div>
+        <div class="tbl-body" id="tblBody"></div>
+        <div class="pagination" id="tblPg"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal" id="modal">
+    <div class="modal-bg" onclick="closeM()"></div>
+    <div class="modal-box">
+      <div class="modal-top">
+        <div class="modal-ttl" id="mTitle">—</div>
+        <button class="modal-close" onclick="closeM()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="mc wide" style="margin-bottom:0"><span class="ml">LOCATION</span><span class="mv" id="mLoc" style="font-size:.95rem">—</span></div>
+        <div class="mc"><span class="ml">MAGNITUDE</span><span class="mv" id="mMag">—</span></div>
+        <div class="mc"><span class="ml">ALERT</span><span class="mv" id="mAlert">—</span></div>
+        <div class="mc"><span class="ml">DEPTH</span><span class="mv" id="mDepth">—</span></div>
+        <div class="mc"><span class="ml">REGION</span><span class="mv" id="mRegion">—</span></div>
+        <div class="mc"><span class="ml">CDI</span><span class="mv" id="mCdi">—</span></div>
+        <div class="mc"><span class="ml">MMI</span><span class="mv" id="mMmi">—</span></div>
+        <div class="mc wide"><span class="ml">SIGNIFICANCE (SIG)</span><span class="mv" id="mSig">—</span></div>
+      </div>
+      <div style="padding:0 1.2rem 1.2rem;display:flex;gap:.6rem">
+        <a href="predict.html" class="btn btn-neon" style="flex:1;justify-content:center;font-size:.78rem">⚡ RUN ML PREDICTION</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="footer-brand">IMPACTSENSE</span>
+      <div style="display:flex;gap:1.2rem">
+        <a href="index.html" class="footer-link">HOME</a>
+        <a href="predict.html" class="footer-link">PREDICT</a>
+        <a href="login.html" class="footer-link">LOGIN</a>
+      </div>
+      <span class="footer-copy">414 USGS Events · GradientBoostingClassifier · 98.6% accuracy</span>
+    </div>
+  </footer>
+
+  <script src="events_data.js"></script>
+  <script>
+    const AC = {green:'#00e87a',yellow:'#f5c518',orange:'#ff7c2a',red:'#ff3b5c'};
+    const rC = m => m<4?'#00e87a':m<6?'#ff7c2a':'#ff3b5c';
+    let all = typeof CSV_EVENTS!=='undefined' ? CSV_EVENTS : [];
+    let filt = [...all];
+    let page = 1;
+    const PG = 25;
+
+    function applyF() {
+      const s=document.getElementById('sSearch').value.toLowerCase();
+      const a=document.getElementById('sAlert').value;
+      const r=document.getElementById('sRegion').value;
+      const so=document.getElementById('sSort').value;
+      filt = all.filter(e=>
+        (a==='all'||e.alert===a)&&
+        (r==='all'||e.region===r)&&
+        (!s||e.location.toLowerCase().includes(s))
+      );
+      if(so==='mag_d') filt.sort((a,b)=>b.magnitude-a.magnitude);
+      else if(so==='mag_a') filt.sort((a,b)=>a.magnitude-b.magnitude);
+      else if(so==='sig_d') filt.sort((a,b)=>b.sig-a.sig);
+      else if(so==='dep_a') filt.sort((a,b)=>a.depth-b.depth);
+      page=1; render();
+    }
+
+    function sortCol(col){
+      const so=document.getElementById('sSort');
+      so.value=col==='magnitude'?'mag_d':col==='sig'?'sig_d':col==='depth'?'dep_a':'id';
+      applyF();
+    }
+
+    function resetF(){
+      ['sSearch','sAlert','sRegion','sSort'].forEach(id=>{
+        const el=document.getElementById(id); if(el) el.value=el.tagName==='SELECT'?'all':'';
+      });
+      document.getElementById('sSort').value='id';
+      applyF();
+    }
+
+    function render(){
+      const body=document.getElementById('tblBody');
+      const info=document.getElementById('tblInfo');
+      const start=(page-1)*PG;
+      const rows=filt.slice(start,start+PG);
+      info.textContent=`Showing ${start+1}–${Math.min(start+PG,filt.length)} of ${filt.length} events`;
+      if(!rows.length){body.innerHTML='<div style="padding:2rem;text-align:center;font-family:var(--fm);font-size:.8rem;color:var(--muted2)">No events match filters</div>';renderPg();return;}
+      body.innerHTML=rows.map(e=>`
+        <div class="trow" onclick="openM(${e.id})">
+          <span class="tid">#${e.id}</span>
+          <span class="tloc">${e.location}</span>
+          <span class="tmag" style="color:${rC(e.magnitude)}">M ${e.magnitude.toFixed(1)}</span>
+          <span class="tcell">${e.depth.toFixed(0)} km</span>
+          <span class="tcell">${e.cdi.toFixed(1)}</span>
+          <span class="tcell">${e.mmi.toFixed(1)}</span>
+          <span class="tcell">${Math.round(e.sig)}</span>
+          <span><span class="badge badge-${e.alert}">${e.alert.toUpperCase()}</span></span>
+        </div>`).join('');
+      renderPg();
+    }
+
+    function renderPg(){
+      const el=document.getElementById('tblPg');
+      const total=Math.ceil(filt.length/PG);
+      if(total<=1){el.innerHTML='';return;}
+      let h='';
+      if(page>1) h+=`<button class="pg" onclick="goP(${page-1})">←</button>`;
+      for(let p=Math.max(1,page-2);p<=Math.min(total,page+2);p++) h+=`<button class="pg ${p===page?'active':''}" onclick="goP(${p})">${p}</button>`;
+      if(page<total) h+=`<button class="pg" onclick="goP(${page+1})">→</button>`;
+      el.innerHTML=h;
+    }
+
+    function goP(p){page=p;render();document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
+
+    function openM(id){
+      const e=all.find(x=>x.id===id); if(!e) return;
+      const s=(i,v,c)=>{const el=document.getElementById(i);if(el){el.textContent=v;if(c)el.style.color=c;}};
+      s('mTitle',`Event #${e.id}`);
+      s('mLoc',e.location);
+      s('mMag',`M ${e.magnitude.toFixed(1)}`,rC(e.magnitude));
+      s('mAlert',e.alert.toUpperCase(),AC[e.alert]);
+      s('mDepth',`${e.depth.toFixed(0)} km`);
+      s('mRegion',e.region.toUpperCase());
+      s('mCdi',e.cdi.toFixed(1));
+      s('mMmi',e.mmi.toFixed(1));
+      s('mSig',String(Math.round(e.sig)));
+      document.getElementById('modal').classList.add('open');
+    }
+
+    function closeM(){document.getElementById('modal').classList.remove('open');}
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
+
+    // Init
+    applyF();
+  </script>
+</body>
+</html>
